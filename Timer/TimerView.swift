@@ -11,20 +11,37 @@ struct TimerView: View {
     @Environment(\.scenePhase) var scenePhase
     @State private var isActive = true
 
+    @State private var isPresented: Bool = false
     @State private var timeRemaining = 100
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     var body: some View {
         ZStack {
+            Color.black.ignoresSafeArea(edges: .all)
             VStack {
                 Text("Time: \(timeRemaining)")
-                    .font(.largeTitle)
-                    .foregroundStyle(.white)
+                    .font(.system(size: 60, design: .monospaced))
+                    .foregroundStyle(.green)
                     .padding(.horizontal, 20)
                     .padding(.vertical, 5)
-                    .background(.black.opacity(0.75))
-                    .clipShape(.capsule)
+                HStack {
+                    Button("Start") {
+                        timeRemaining = 100
+                        isActive = true
+                    }
+                    Button("Stop") {
+                        isActive = false
+                    }
+                }
+                Spacer()
+                Button("Settings") {
+                    isPresented.toggle()
+                }
+                .background(Color.green)
+                .sheet(isPresented: $isPresented) {
+                }
             }
+
         }
         .onReceive(timer) { time in
             guard isActive else { return }
