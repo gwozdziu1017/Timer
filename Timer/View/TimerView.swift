@@ -26,10 +26,13 @@ struct TimerView: View {
                     .padding(.vertical, 5)
                 HStack {
                     Button("Start") {
-                        timeRemaining = 100
                         isActive = true
+                    }//.disabled(disabled: true)
+                    Button("Pause") {
+                        isActive = false
                     }
                     Button("Stop") {
+                        timeRemaining = 100
                         isActive = false
                     }
                 }
@@ -39,6 +42,7 @@ struct TimerView: View {
                 }
                 .background(Color.green)
                 .sheet(isPresented: $isPresented) {
+                    TimerSettingsView()
                 }
             }
 
