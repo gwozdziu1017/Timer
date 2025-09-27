@@ -14,7 +14,9 @@ struct TimerView: View {
     @State private var isPresented: Bool = false
     @State private var timeRemaining = 100
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    
+
+    @State var settings: TimerSettingsModel = TimerSettingsModel()
+
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea(edges: .all)
@@ -35,6 +37,7 @@ struct TimerView: View {
                         timeRemaining = 100
                         isActive = false
                     }
+                    Text("test: \($settings.noOfRounds)").foregroundStyle(.red)
                 }
                 Spacer()
                 Button("Settings") {
@@ -42,7 +45,7 @@ struct TimerView: View {
                 }
                 .background(Color.green)
                 .sheet(isPresented: $isPresented) {
-                    TimerSettingsView()
+                    TimerSettingsView(settings: $settings)
                 }
             }
 
