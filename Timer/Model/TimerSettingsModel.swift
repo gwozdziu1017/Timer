@@ -4,8 +4,9 @@
 //
 //  Created by Damian Gwóźdź on 24/09/2025.
 //
+import SwiftUI
 
-struct Time: Equatable {
+struct Time: Equatable, Hashable {
     var minutes: Int
     var seconds: Int
 
@@ -13,7 +14,15 @@ struct Time: Equatable {
         self.minutes = minutes
         self.seconds = seconds
     }
+    init() {
+        self.minutes = 0
+        self.seconds = 0
+    }
 
+    mutating func setTime(minutes: Int, seconds: Int) {
+        self.minutes = minutes
+        self.seconds = seconds
+    }
     func convertTimeToInt(time: Time) -> Int {
         return 60 * time.minutes + time.seconds
     }
@@ -31,26 +40,34 @@ struct Time: Equatable {
     }
 }
 
-/* TODO
-enum PrecountdownTime: Time {
-    case 0
-    case 5
-    case 10
-    case 30
+extension Time {
+    func printSeconds() -> String {
+        return "\(seconds)" + " sec"
+    }
 }
- */
 
-struct TimerSettingsModel {
+let breakTimeArray: [Time] = [
+    Time(minutes: 0, seconds: 5),
+    Time(minutes: 0, seconds: 30),
+    Time(minutes: 0, seconds: 60)
+]
+
+let precountdownTimeArray: [Time] = [
+    Time(minutes: 0, seconds: 5),
+    Time(minutes: 0, seconds: 10),
+    Time(minutes: 0, seconds: 30)]
+
+class TimerSettingsModel: ObservableObject {
     var noOfRounds: Int
     var roundTime: Time
     var breakTime: Time
-    var precountdownTime: Int
+    var precountdownTime: Time
 
     init(
         noOfRounds: Int,
         roundTime: Time,
         breakTime: Time,
-        precountdownTime: Int) {
+        precountdownTime: Time) {
             self.noOfRounds = noOfRounds
             self.roundTime = roundTime
             self.breakTime = breakTime
@@ -61,22 +78,22 @@ struct TimerSettingsModel {
         self.noOfRounds = 5
         self.roundTime = Time(minutes: 5, seconds: 0)
         self.breakTime = Time(minutes: 1, seconds: 0)
-        self.precountdownTime = 10
+        self.precountdownTime = Time(minutes: 0, seconds: 10)
     }
 
-    mutating func setNoOfRounds(noOfRounds: Int) {
+    func setNoOfRounds(noOfRounds: Int) {
         self.noOfRounds = noOfRounds
     }
 
-    mutating func setRoundTime(roundTime: Time) {
+    func setRoundTime(roundTime: Time) {
         self.roundTime = roundTime
     }
 
-    mutating func setBreakTime(breakTime: Time) {
+    func setBreakTime(breakTime: Time) {
         self.breakTime = breakTime
     }
 
-    mutating func setPrecountdownTime(precountdownTime: Int) {
+    func setPrecountdownTime(precountdownTime: Time) {
         self.precountdownTime = precountdownTime
     }
 }
