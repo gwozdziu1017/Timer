@@ -37,7 +37,9 @@ struct TimerView: View {
                         timeRemaining = 100
                         isActive = false
                     }
-                    Text("test: \($settings.noOfRounds)").foregroundStyle(.red)
+                }
+                VStack { // temporarily for testing
+                    Text("\(settings.print())").foregroundStyle(.white)
                 }
                 Spacer()
                 Button("Settings") {

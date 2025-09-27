@@ -44,6 +44,9 @@ extension Time {
     func printSeconds() -> String {
         return "\(seconds)" + " sec"
     }
+    func print() -> String {
+        return "\(minutes) min :\(seconds) sec"
+    }
 }
 
 let breakTimeArray: [Time] = [
@@ -95,5 +98,11 @@ class TimerSettingsModel: ObservableObject {
 
     func setPrecountdownTime(precountdownTime: Time) {
         self.precountdownTime = precountdownTime
+    }
+}
+
+extension TimerSettingsModel {
+    func print() -> String {
+        return "No of rounds: \(noOfRounds)\nRound time: \(roundTime.print())\nBreak time: \(breakTime.print())\nPrecountdown time: \(precountdownTime.print())"
     }
 }

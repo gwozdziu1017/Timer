@@ -9,19 +9,12 @@ import SwiftUI
 
 struct TimerSettingsView: View {
     @State private var isPrecountOn: Bool
-    @State private var noOfRounds: Int
-    @State private var roundTime: Time
-    @State private var breakTime: Time
-    @State private var precountdownTime: Time
 
+    @State private var temporarySettings: TimerSettingsModel = .init()
     @Binding var timerSettingsModel: TimerSettingsModel
 
     init(settings: Binding<TimerSettingsModel>) {
         isPrecountOn = false
-        noOfRounds = 1
-        roundTime = .init(minutes: 3, seconds: 0)
-        breakTime = .init(minutes: 1, seconds: 0)
-        precountdownTime = .init(minutes: 0, seconds: 10)
         self._timerSettingsModel = settings
     }
     
@@ -32,8 +25,8 @@ struct TimerSettingsView: View {
             VStack { // all properties
                 VStack { // no of rounds
                     Text("Number of rounds:")
-                    Picker("noofrounds", selection: $noOfRounds) {
-                        ForEach(1..<51){elem  in
+                    Picker("noofrounds", selection: $temporarySettings.noOfRounds) {
+                        ForEach(0..<50){elem  in
                             Text("\(elem)")
                         }
                     }.pickerStyle(WheelPickerStyle())
@@ -42,14 +35,14 @@ struct TimerSettingsView: View {
                     Text("Work time:")
                     HStack {
                         Text("Minutes:")
-                        Picker("min", selection: $roundTime.minutes) {
-                            ForEach(1..<61){elem  in
+                        Picker("min", selection: $temporarySettings.roundTime.minutes) {
+                            ForEach(0..<60){elem  in
                                 Text("\(elem)")
                             }
                         }.pickerStyle(WheelPickerStyle())
                         Text("Seconds:")
-                        Picker("sec", selection: $roundTime.seconds) {
-                            ForEach(1..<61){elem  in
+                        Picker("sec", selection: $temporarySettings.roundTime.seconds) {
+                            ForEach(0..<60){elem  in
                                 Text("\(elem)")
                             }
                         }.pickerStyle(WheelPickerStyle())
@@ -58,7 +51,7 @@ struct TimerSettingsView: View {
                 }
                 VStack {
                     Text("Break time:")
-                    Picker("breaktime", selection: $breakTime) {
+                    Picker("breaktime", selection: $temporarySettings.breakTime) {
                         // make it like 5 10 30 60 sec
                         ForEach(breakTimeArray, id:\.self){ elem  in
                             Text("\(elem.printSeconds())")
@@ -67,10 +60,9 @@ struct TimerSettingsView: View {
                 }
                 VStack {// precount
                     Text("Precount:")
-                    
                     Toggle("Precount", isOn: $isPrecountOn)
                     if isPrecountOn {
-                        Picker("precount", selection: $precountdownTime) {
+                        Picker("precount", selection: $temporarySettings.precountdownTime) {
                             ForEach(precountdownTimeArray, id: \.self){ elem  in
                                 Text("\(elem.printSeconds())")
                             }
@@ -80,9 +72,11 @@ struct TimerSettingsView: View {
                 }
                 HStack {
                     Button("Save") {
-                        // TODO: if precountdown is off then value should be zero
-                        timerSettingsModel.setNoOfRounds(noOfRounds: 777)
-                        
+                        if isPrecountOn == false {
+                            temporarySettings.precountdownTime = Time(minutes: 0, seconds: 0)
+                        }
+                        timerSettingsModel = temporarySettings
+
                     } // button save
                 }
             }
