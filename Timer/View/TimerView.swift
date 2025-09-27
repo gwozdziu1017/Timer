@@ -10,6 +10,8 @@ import SwiftUI
 struct TimerView: View {
     @Environment(\.scenePhase) var scenePhase
     @State private var isActive = true
+    
+    @State private var isStartPressed: Bool = false
 
     @State private var isPresented: Bool = false
     @State private var timeRemaining = 100
@@ -29,14 +31,17 @@ struct TimerView: View {
                 HStack {
                     Button("Start") {
                         isActive = true
-                    }//.disabled(disabled: true)
+                        isStartPressed = true
+                    }.disabled(isActive)
                     Button("Pause") {
                         isActive = false
-                    }
+                        isStartPressed = false
+                    }.disabled(!isActive)
                     Button("Stop") {
                         timeRemaining = 100
                         isActive = false
-                    }
+                        isStartPressed = false
+                    }.disabled(!isActive && isStartPressed)   
                 }
                 VStack { // temporarily for testing
                     Text("\(settings.print())").foregroundStyle(.white)
