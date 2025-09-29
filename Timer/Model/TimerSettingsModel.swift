@@ -60,6 +60,16 @@ let precountdownTimeArray: [Time] = [
     Time(minutes: 0, seconds: 10),
     Time(minutes: 0, seconds: 30)]
 
+let minRoundNumber: Int = 1
+let maxRoundNumber: Int = 30
+
+let minTimeMinute: Int = 0
+let maxTimeMinute: Int = 20
+
+let minTimeSecond: Int = 0
+let maxTimeSecond: Int = 59
+
+
 class TimerSettingsModel: ObservableObject {
     var noOfRounds: Int
     var roundTime: Time

@@ -22,43 +22,41 @@ struct TimerSettingsView: View {
         VStack {
             Text("Settings")
             //Spacer()
-            VStack { // all properties
-                VStack { // no of rounds
+            VStack {
+                VStack {
                     Text("Number of rounds:")
                     Picker("noofrounds", selection: $temporarySettings.noOfRounds) {
-                        ForEach(0..<50){elem  in
+                        ForEach(minRoundNumber..<maxRoundNumber, id: \.self) {elem  in
                             Text("\(elem)")
                         }
                     }.pickerStyle(WheelPickerStyle())
                 }
-                VStack { // length
+                VStack {
                     Text("Work time:")
                     HStack {
                         Text("Minutes:")
                         Picker("min", selection: $temporarySettings.roundTime.minutes) {
-                            ForEach(0..<60){elem  in
+                            ForEach(minTimeMinute..<maxTimeMinute, id: \.self) {elem  in
                                 Text("\(elem)")
                             }
                         }.pickerStyle(WheelPickerStyle())
                         Text("Seconds:")
                         Picker("sec", selection: $temporarySettings.roundTime.seconds) {
-                            ForEach(0..<60){elem  in
+                            ForEach(minTimeSecond..<maxTimeSecond, id: \.self) {elem  in
                                 Text("\(elem)")
                             }
                         }.pickerStyle(WheelPickerStyle())
                     }
-                    
                 }
                 VStack {
                     Text("Break time:")
                     Picker("breaktime", selection: $temporarySettings.breakTime) {
-                        // make it like 5 10 30 60 sec
-                        ForEach(breakTimeArray, id:\.self){ elem  in
+                        ForEach(breakTimeArray, id:\.self) { elem  in
                             Text("\(elem.printSeconds())")
                         }
                     }.pickerStyle(SegmentedPickerStyle())
                 }
-                VStack {// precount
+                VStack {
                     Text("Precount:")
                     Toggle("Precount", isOn: $isPrecountOn)
                     if isPrecountOn {
@@ -68,7 +66,6 @@ struct TimerSettingsView: View {
                             }
                         }.pickerStyle(SegmentedPickerStyle())
                     }
-                    
                 }
                 HStack {
                     Button("Save") {
@@ -76,8 +73,7 @@ struct TimerSettingsView: View {
                             temporarySettings.precountdownTime = Time(minutes: 0, seconds: 0)
                         }
                         timerSettingsModel = temporarySettings
-
-                    } // button save
+                    }
                 }
             }
         }
