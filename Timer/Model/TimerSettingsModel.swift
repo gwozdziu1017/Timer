@@ -75,16 +75,19 @@ class TimerSettingsModel: ObservableObject {
     var roundTime: Time
     var breakTime: Time
     var precountdownTime: Time
+    var isPrecountOn: Bool
 
     init(
         noOfRounds: Int,
         roundTime: Time,
         breakTime: Time,
-        precountdownTime: Time) {
+        precountdownTime: Time,
+        isPrecountOn: Bool = false) {
             self.noOfRounds = noOfRounds
             self.roundTime = roundTime
             self.breakTime = breakTime
             self.precountdownTime = precountdownTime
+            self.isPrecountOn = isPrecountOn
     }
 
     init() {
@@ -92,6 +95,7 @@ class TimerSettingsModel: ObservableObject {
         self.roundTime = Time(minutes: 5, seconds: 0)
         self.breakTime = Time(minutes: 1, seconds: 0)
         self.precountdownTime = Time(minutes: 0, seconds: 10)
+        self.isPrecountOn = false
     }
 
     func setNoOfRounds(noOfRounds: Int) {
