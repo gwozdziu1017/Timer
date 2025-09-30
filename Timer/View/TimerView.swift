@@ -12,34 +12,34 @@ struct TimerView: View {
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     @State var settings: TimerSettingsModel = TimerSettingsModel()
-    @ObservedObject var tvm: TimerViewModel
+    @ObservedObject var timerViewModel: TimerViewModel
     
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea(edges: .all)
             VStack {
-                tvm.getTimeView()
-                tvm.getStartPauseStopButtonsView()
+                timerViewModel.getTimeView()
+                timerViewModel.getStartPauseStopButtonsView()
                 
                 VStack { // temporarily for testing
                     Text("\(settings.print())").foregroundStyle(.white)
                 }
                 Spacer()                
-                tvm.getSettingsButtonView()
-                    .sheet(isPresented: $tvm.isPresented) {
+                timerViewModel.getSettingsButtonView()
+                    .sheet(isPresented: $timerViewModel.isPresented) {
                         TimerSettingsView(settings: $settings)
                     }
             }
         }
         .onReceive(timer) { time in
-            tvm.onReceivingTimer(timer: time)
+            timerViewModel.onReceivingTimer(timer: time)
         }
         .onChange(of: scenePhase) {
-            tvm.onChange(scenePhase: scenePhase)
+            timerViewModel.onChange(scenePhase: scenePhase)
         }
     }
 }
 
 #Preview {
-    TimerView(tvm: .init())
+    TimerView(timerViewModel: .init())
 }

@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct TimerSettingsView: View {
-    @ObservedObject var tsvm: TimerSettingsViewModel
+    @ObservedObject var timerSettingsViewModel: TimerSettingsViewModel
     
     init(settings: Binding<TimerSettingsModel>) {
-        tsvm = .init(settings: settings)
+        timerSettingsViewModel = .init(settings: settings)
     }
 
     var body: some View {
-        tsvm.getView()
+        timerSettingsViewModel.getView()
     }
 }
 
