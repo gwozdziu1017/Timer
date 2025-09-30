@@ -25,7 +25,7 @@ class TimerSettingsViewModel: ObservableObject {
             
         }
     }
-    
+
     func getWorkTimeView() -> some View {
         VStack {
             Text("Work time:")
@@ -45,7 +45,7 @@ class TimerSettingsViewModel: ObservableObject {
             }
         }
     }
-    
+
     func getBreakTimeView() -> some View {
         VStack {
             Text("Break time:")
@@ -56,7 +56,7 @@ class TimerSettingsViewModel: ObservableObject {
             }.pickerStyle(SegmentedPickerStyle())
         }
     }
-    
+
     func getPrecountOnView() -> some View {
         VStack {
             Text("Precount:")

@@ -24,8 +24,7 @@ struct TimerView: View {
                 VStack { // temporarily for testing
                     Text("\(settings.print())").foregroundStyle(.white)
                 }
-                Spacer()
-                
+                Spacer()                
                 tvm.getSettingsButtonView()
                     .sheet(isPresented: $tvm.isPresented) {
                         TimerSettingsView(settings: $settings)

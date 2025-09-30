@@ -6,25 +6,42 @@ class TimerViewModel: ObservableObject {
     @Published public var isPresented: Bool = false
     @Published public var timeRemaining = 100
 
-    func shouldStopBeDisabled() -> Bool {
-        return !self.isActive && !self.isPaused// && self.isStartPressed
+    private var isStartButtonDisabled: Bool = false
+    private var isPauseButtonDisabled: Bool = true
+    private var isStopButtonDisabled: Bool = true
+
+    func setStartPauseStopButtonsDisabled(startButtonDisabled: Bool, pauseButtonDisabled: Bool, stopButtonDisabled: Bool) {
+        self.isStartButtonDisabled = startButtonDisabled
+        self.isPauseButtonDisabled = pauseButtonDisabled
+        self.isStopButtonDisabled = stopButtonDisabled
     }
 
     func getStartPauseStopButtonsView() -> some View {
         HStack {
             Button("Start") {
                 self.isActive = true
-                self.isPaused = false
-                //self.isStartPressed = true
-            }.disabled(self.isActive)
+                self.setStartPauseStopButtonsDisabled(
+                    startButtonDisabled: true,
+                    pauseButtonDisabled: false,
+                    stopButtonDisabled: false)
+            }.disabled(self.isStartButtonDisabled)
+
             Button("Pause") {
                 self.isActive = false
-                self.isPaused = true
-            }.disabled(!self.isActive)
+                self.setStartPauseStopButtonsDisabled(
+                    startButtonDisabled: false,
+                    pauseButtonDisabled: true,
+                    stopButtonDisabled: false)
+            }.disabled(isPauseButtonDisabled)
+
             Button("Stop") {
                 self.timeRemaining = 100
                 self.isActive = false
-            }.disabled(!self.isActive && !self.isPaused)
+                self.setStartPauseStopButtonsDisabled(
+                    startButtonDisabled: false,
+                    pauseButtonDisabled: true,
+                    stopButtonDisabled: true)
+            }.disabled(isStopButtonDisabled)
         }
     }
 

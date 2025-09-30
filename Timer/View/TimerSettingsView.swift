@@ -13,7 +13,7 @@ struct TimerSettingsView: View {
     init(settings: Binding<TimerSettingsModel>) {
         tsvm = .init(settings: settings)
     }
-    
+
     var body: some View {
         tsvm.getView()
     }
