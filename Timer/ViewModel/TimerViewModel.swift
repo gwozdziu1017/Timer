@@ -3,21 +3,26 @@ import SwiftUI
 class TimerViewModel: ObservableObject {
     @Binding var timerModel: TimerModel
 
-    func getTimerModel() -> TimerModel {
-        return self.timerModel
-    }
-    
-    @Published public var isActive = true
-    @Published public var isPaused: Bool = false
-    @Published public var isPresented: Bool = false
-    @Published public var timeRemaining = 100
+    @Published public var isActive: Bool
+    @Published public var isPaused: Bool
+    @Published public var isPresented: Bool
+    @Published public var timeRemaining: Time
 
-    private var isStartButtonDisabled: Bool = false
-    private var isPauseButtonDisabled: Bool = true
-    private var isStopButtonDisabled: Bool = true
+    private var isStartButtonDisabled: Bool
+    private var isPauseButtonDisabled: Bool
+    private var isStopButtonDisabled: Bool
 
     init(timerModel: Binding<TimerModel>) {
         self._timerModel = timerModel
+        
+        self.isActive = false
+        self.isPaused = false
+        self.isPresented = false
+        self.timeRemaining = timerModel.roundTime.wrappedValue
+
+        self.isStartButtonDisabled = false
+        self.isPauseButtonDisabled = true
+        self.isStopButtonDisabled = true
     }
 
     func setStartPauseStopButtonsDisabled(startButtonDisabled: Bool, pauseButtonDisabled: Bool, stopButtonDisabled: Bool) {
@@ -45,7 +50,7 @@ class TimerViewModel: ObservableObject {
             }.disabled(isPauseButtonDisabled)
 
             Button("Stop") {
-                self.timeRemaining = 100
+                self.timeRemaining = self.timerModel.getInitialTime()
                 self.isActive = false
                 self.setStartPauseStopButtonsDisabled(
                     startButtonDisabled: false,
@@ -62,28 +67,51 @@ class TimerViewModel: ObservableObject {
         .background(Color.green)
     }
 
-    func onChange(scenePhase: ScenePhase) {
-        if scenePhase == .active {
-            self.isActive = true
-        } else {
-            self.isActive = false
-        }
-    }
-
     func onReceivingTimer(timer: Date) {
         guard self.isActive else { return }
 
-        if self.timeRemaining > 0 {
-            self.timeRemaining -= 1
+        runTimer()
+    }
+
+    func runTimer() {
+        var time = self.timeRemaining.convertTimeToInt()
+        if time > 0 {
+            time -= 1
         }
+        self.timeRemaining = time.toTime()
     }
 
     func getTimeView() -> some View {
-        Text("Time: \(self.timeRemaining)")
-            .font(.system(size: 60, design: .monospaced))
+        Text("Remaining\n\(self.timeRemaining.printable())")
+            .font(.system(size: 30, design: .monospaced))
             .foregroundStyle(.green)
             .padding(.horizontal, 20)
             .padding(.vertical, 5)
     }
 
+    func getTimerModeView() -> some View {
+        Text(timerModel.timerMode.getModeString())
+            .font(.system(size: 30, design: .monospaced))
+            .foregroundStyle(.green)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 5)
+    }
+
+    func getCurrentRoundView() -> some View {
+        Text("Round: \(self.timerModel.currentRound) of \(self.timerModel.noOfRounds)")
+            .font(.system(size: 30, design: .monospaced))
+            .foregroundStyle(.green)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 5)
+    }
+
+//    func resetTime() {
+//        self.timeRemaining = self.timerModel.roundTime
+//        self.isActive = false
+//    }
+
+}
+
+#Preview {
+    TimerView(timerViewModel: .init(timerModel: .constant(TimerModel())))
 }

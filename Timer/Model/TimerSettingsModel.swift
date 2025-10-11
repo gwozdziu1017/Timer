@@ -44,8 +44,19 @@ extension Time {
     func printSeconds() -> String {
         return "\(seconds)" + " sec"
     }
-    func print() -> String {
+    func printable() -> String {
         return "\(minutes) min :\(seconds) sec"
+    }
+    func get() -> Time {
+        return self
+    }
+}
+
+extension Int {
+    func toTime() -> Time {
+        let minutes: Int = self / 60
+        let seconds: Int = self % 60
+        return Time(minutes: minutes, seconds: seconds)
     }
 }
 

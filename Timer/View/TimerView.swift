@@ -18,7 +18,9 @@ struct TimerView: View {
         ZStack {
             Color.black.ignoresSafeArea(edges: .all)
             VStack {
+                timerViewModel.getTimerModeView()
                 timerViewModel.getTimeView()
+                timerViewModel.getCurrentRoundView()
                 timerViewModel.getStartPauseStopButtonsView()
                 
                 VStack { // temporarily for testing
@@ -34,12 +36,9 @@ struct TimerView: View {
         .onReceive(timer) { time in
             timerViewModel.onReceivingTimer(timer: time)
         }
-        .onChange(of: scenePhase) {
-            timerViewModel.onChange(scenePhase: scenePhase)
-        }
     }
 }
 
-//#Preview {
-//    TimerView(timerViewModel: .init(tm: .init()))
-//}
+#Preview {
+    TimerView(timerViewModel: .init(timerModel: .constant(TimerModel())))
+}
