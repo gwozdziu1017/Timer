@@ -1,6 +1,12 @@
 import SwiftUI
 
 class TimerViewModel: ObservableObject {
+    @Binding var timerModel: TimerModel
+
+    func getTimerModel() -> TimerModel {
+        return self.timerModel
+    }
+    
     @Published public var isActive = true
     @Published public var isPaused: Bool = false
     @Published public var isPresented: Bool = false
@@ -9,6 +15,10 @@ class TimerViewModel: ObservableObject {
     private var isStartButtonDisabled: Bool = false
     private var isPauseButtonDisabled: Bool = true
     private var isStopButtonDisabled: Bool = true
+
+    init(timerModel: Binding<TimerModel>) {
+        self._timerModel = timerModel
+    }
 
     func setStartPauseStopButtonsDisabled(startButtonDisabled: Bool, pauseButtonDisabled: Bool, stopButtonDisabled: Bool) {
         self.isStartButtonDisabled = startButtonDisabled

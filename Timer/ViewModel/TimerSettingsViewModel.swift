@@ -8,16 +8,16 @@
 import SwiftUI
 
 class TimerSettingsViewModel: ObservableObject {
-    @Binding var timerSettingsModel: TimerSettingsModel
+    var timerViewModel: TimerViewModel
 
-    init(settings: Binding<TimerSettingsModel>) {
-        self._timerSettingsModel = settings
+    init(timerViewModel: Binding<TimerModel>) {
+        self.timerViewModel = .init(timerModel: timerViewModel)
     }
     
     func getNumberOfRoundsView() -> some View {
         VStack {
             Text("Number of rounds:")
-            Picker("noofrounds", selection: $timerSettingsModel.noOfRounds) {
+            Picker("noofrounds", selection: timerViewModel.$timerModel.noOfRounds) {
                 ForEach(minRoundNumber...maxRoundNumber, id: \.self) {elem  in
                     Text("\(elem)")
                 }
@@ -31,13 +31,13 @@ class TimerSettingsViewModel: ObservableObject {
             Text("Work time:")
             HStack {
                 Text("Minutes:")
-                Picker("min", selection: $timerSettingsModel.roundTime.minutes) {
+                Picker("min", selection: timerViewModel.$timerModel.roundTime.minutes) {
                     ForEach(minTimeMinute...maxTimeMinute, id: \.self) {elem  in
                         Text("\(elem)")
                     }
                 }.pickerStyle(WheelPickerStyle())
                 Text("Seconds:")
-                Picker("sec", selection: $timerSettingsModel.roundTime.seconds) {
+                Picker("sec", selection: timerViewModel.$timerModel.roundTime.seconds) {
                     ForEach(minTimeSecond...maxTimeSecond, id: \.self) {elem  in
                         Text("\(elem)")
                     }
@@ -49,7 +49,7 @@ class TimerSettingsViewModel: ObservableObject {
     func getBreakTimeView() -> some View {
         VStack {
             Text("Break time:")
-            Picker("breaktime", selection: $timerSettingsModel.breakTime) {
+            Picker("breaktime", selection: timerViewModel.$timerModel.breakTime) {
                 ForEach(breakTimeArray, id:\.self) { elem  in
                     Text("\(elem.printSeconds())")
                 }
@@ -60,9 +60,9 @@ class TimerSettingsViewModel: ObservableObject {
     func getPrecountOnView() -> some View {
         VStack {
             Text("Precount:")
-            Toggle("Precount", isOn: $timerSettingsModel.isPrecountOn)
-            if timerSettingsModel.isPrecountOn {
-                Picker("precount", selection: $timerSettingsModel.precountdownTime) {
+            Toggle("Precount", isOn: timerViewModel.$timerModel.isPrecountOn)
+            if timerViewModel.timerModel.isPrecountOn {
+                Picker("precount", selection: timerViewModel.$timerModel.precountdownTime) {
                     ForEach(precountdownTimeArray, id: \.self){ elem  in
                         Text("\(elem.printSeconds())")
                     }
@@ -74,8 +74,8 @@ class TimerSettingsViewModel: ObservableObject {
     func getSaveButtonView() -> some View {
         HStack {
             Button("Save") {
-                if self.timerSettingsModel.isPrecountOn == false {
-                    self.timerSettingsModel.precountdownTime = Time(minutes: 0, seconds: 0)
+                if self.timerViewModel.timerModel.isPrecountOn == false {
+                    self.timerViewModel.timerModel.precountdownTime = Time(minutes: 0, seconds: 0)
                 }
             }
         }

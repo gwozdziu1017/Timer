@@ -11,7 +11,7 @@ import SwiftUI
 struct TimerApp: App {
     var body: some Scene {
         WindowGroup {
-            TimerView(timerViewModel: .init())
+            TimerView(timerViewModel: .init(timerModel: .constant(.init())))
         }
     }
 }

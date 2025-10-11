@@ -11,7 +11,7 @@ struct TimerView: View {
     @Environment(\.scenePhase) var scenePhase
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
-    @State var settings: TimerSettingsModel = TimerSettingsModel()
+    @State var timerModel: TimerModel = TimerModel()
     @ObservedObject var timerViewModel: TimerViewModel
     
     var body: some View {
@@ -22,12 +22,12 @@ struct TimerView: View {
                 timerViewModel.getStartPauseStopButtonsView()
                 
                 VStack { // temporarily for testing
-                    Text("\(settings.print())").foregroundStyle(.white)
+                    Text("\(timerModel.print())").foregroundStyle(.white)
                 }
                 Spacer()                
                 timerViewModel.getSettingsButtonView()
                     .sheet(isPresented: $timerViewModel.isPresented) {
-                        TimerSettingsView(settings: $settings)
+                        TimerSettingsView(settings: $timerModel)
                     }
             }
         }
@@ -40,6 +40,6 @@ struct TimerView: View {
     }
 }
 
-#Preview {
-    TimerView(timerViewModel: .init())
-}
+//#Preview {
+//    TimerView(timerViewModel: .init(tm: .init()))
+//}
