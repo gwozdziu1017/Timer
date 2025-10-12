@@ -18,13 +18,14 @@ struct TimerView: View {
         ZStack {
             Color.black.ignoresSafeArea(edges: .all)
             VStack {
-                timerViewModel.getTimerModeView()
-                timerViewModel.getTimeView()
-                timerViewModel.getCurrentRoundView()
-                timerViewModel.getStartPauseStopButtonsView()
+                timerViewModel.getView(timer: $timerModel)
+//                timerViewModel.getTimerModeView()
+//                timerViewModel.getTimeView(timer: timerModel)
+//                timerViewModel.getCurrentRoundView()
+//                timerViewModel.getStartPauseStopButtonsView()
                 
                 VStack { // temporarily for testing
-                    Text("\(timerModel.print())").foregroundStyle(.white)
+                    Text("\(timerViewModel.timerModel.print())").foregroundStyle(.white)
                 }
                 Spacer()                
                 timerViewModel.getSettingsButtonView()

@@ -6,7 +6,7 @@ class TimerViewModel: ObservableObject {
     @Published public var isActive: Bool
     @Published public var isPaused: Bool
     @Published public var isPresented: Bool
-    @Published public var timeRemaining: Time
+    @Published public var timeRemaining: Int = 100
 
     private var isStartButtonDisabled: Bool
     private var isPauseButtonDisabled: Bool
@@ -18,7 +18,7 @@ class TimerViewModel: ObservableObject {
         self.isActive = false
         self.isPaused = false
         self.isPresented = false
-        self.timeRemaining = timerModel.roundTime.wrappedValue
+//        self.timeRemaining = Time(minutes: timerModel.wrappedValue.roundTime.minutes, seconds: timerModel.wrappedValue.roundTime.seconds).toInt()
 
         self.isStartButtonDisabled = false
         self.isPauseButtonDisabled = true
@@ -50,7 +50,7 @@ class TimerViewModel: ObservableObject {
             }.disabled(isPauseButtonDisabled)
 
             Button("Stop") {
-                self.timeRemaining = self.timerModel.getInitialTime()
+                self.timeRemaining = self.timerModel.getInitialTime().toInt()
                 self.isActive = false
                 self.setStartPauseStopButtonsDisabled(
                     startButtonDisabled: false,
@@ -70,19 +70,13 @@ class TimerViewModel: ObservableObject {
     func onReceivingTimer(timer: Date) {
         guard self.isActive else { return }
 
-        runTimer()
-    }
-
-    func runTimer() {
-        var time = self.timeRemaining.convertTimeToInt()
-        if time > 0 {
-            time -= 1
+        if self.timerModel.roundTime.toInt() > 0 {
+            self.timerModel.roundTime = Time(minutes: self.timerModel.roundTime.minutes, seconds: self.timerModel.roundTime.seconds - 1)
         }
-        self.timeRemaining = time.toTime()
     }
 
     func getTimeView() -> some View {
-        Text("Remaining\n\(self.timeRemaining.printable())")
+        Text("Remaining\n\(self.timerModel.roundTime.toInt())")
             .font(.system(size: 30, design: .monospaced))
             .foregroundStyle(.green)
             .padding(.horizontal, 20)
@@ -103,6 +97,16 @@ class TimerViewModel: ObservableObject {
             .foregroundStyle(.green)
             .padding(.horizontal, 20)
             .padding(.vertical, 5)
+    }
+
+    func getView(timer: Binding<TimerModel>) -> some View {
+        self._timerModel = timer
+        return VStack {
+            self.getTimerModeView()
+            self.getTimeView()
+            self.getCurrentRoundView()
+            self.getStartPauseStopButtonsView()
+        }
     }
 
 //    func resetTime() {

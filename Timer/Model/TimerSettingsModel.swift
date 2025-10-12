@@ -50,6 +50,9 @@ extension Time {
     func get() -> Time {
         return self
     }
+    func toInt() -> Int {
+        return convertTimeToInt(time: self)
+    }
 }
 
 extension Int {
