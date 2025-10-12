@@ -8,7 +8,7 @@
 import SwiftUI
 
 class TimerSettingsViewModel: ObservableObject {
-    var timerViewModel: TimerViewModel
+    @Published var timerViewModel: TimerViewModel
 
     init(timerViewModel: Binding<TimerModel>) {
         self.timerViewModel = .init(timerModel: timerViewModel)
@@ -60,26 +60,20 @@ class TimerSettingsViewModel: ObservableObject {
     func getPrecountOnView() -> some View {
         VStack {
             Text("Precount:")
-            Toggle("Precount", isOn: timerViewModel.$timerModel.isPrecountOn)
-            if timerViewModel.timerModel.isPrecountOn {
-                Picker("precount", selection: timerViewModel.$timerModel.precountdownTime) {
-                    ForEach(precountdownTimeArray, id: \.self){ elem  in
-                        Text("\(elem.printSeconds())")
-                    }
-                }.pickerStyle(SegmentedPickerStyle())
-            }
+            Picker("precount", selection: timerViewModel.$timerModel.precountdownTime) {
+                ForEach(precountdownTimeArray, id:\.self) { elem  in
+                    Text("\(elem.printSeconds())")
+                }
+            }.pickerStyle(SegmentedPickerStyle())
         }
     }
     
     func getSaveButtonView() -> some View {
         HStack {
             Button("Save") {
-                if self.timerViewModel.timerModel.isPrecountOn == false {
-                    self.timerViewModel.timerModel.precountdownTime = Time(minutes: 0, seconds: 0)
                 }
             }
         }
-    }
 
     func getView() -> some View {
         VStack {
@@ -93,6 +87,5 @@ class TimerSettingsViewModel: ObservableObject {
                 getSaveButtonView()
             }
         }
-        
     }
 }

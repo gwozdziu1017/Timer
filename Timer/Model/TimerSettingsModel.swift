@@ -70,6 +70,7 @@ let breakTimeArray: [Time] = [
 ]
 
 let precountdownTimeArray: [Time] = [
+    Time(minutes: 0, seconds: 0),
     Time(minutes: 0, seconds: 5),
     Time(minutes: 0, seconds: 10),
     Time(minutes: 0, seconds: 30)]
