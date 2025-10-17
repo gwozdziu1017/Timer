@@ -7,32 +7,29 @@
 
 import SwiftUI
 
-struct TimerView: View {
-    @Environment(\.scenePhase) var scenePhase
+struct TimerViewContent: View {
+    @StateObject private var timerViewModel: TimerViewModel
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-
-    @State var timerModel: TimerModel = TimerModel()
-    @ObservedObject var timerViewModel: TimerViewModel
+    
+    init(timerModel: Binding<TimerModel>) {
+        _timerViewModel = StateObject(wrappedValue: TimerViewModel(timerModel: timerModel))
+    }
     
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea(edges: .all)
-            VStack {
-                timerViewModel.getView(timer: $timerModel)
-//                timerViewModel.getTimerModeView()
-//                timerViewModel.getTimeView(timer: timerModel)
-//                timerViewModel.getCurrentRoundView()
-//                timerViewModel.getStartPauseStopButtonsView()
-                
-                VStack { // temporarily for testing
-                    Text("\(timerViewModel.timerModel.print())").foregroundStyle(.white)
+        
+        
+        // navigation stack na calosc ?
+        VStack {
+            timerViewModel.getTimerModeView()
+            timerViewModel.getTimeView()
+            timerViewModel.getCurrentRoundView()
+            timerViewModel.getStartPauseStopButtonsView()
+        
+            Spacer()
+            timerViewModel.getSettingsButtonView()
+                .sheet(isPresented: $timerViewModel.isPresented) {
+                    TimerSettingsView(settings: $timerViewModel.timerModel)
                 }
-                Spacer()                
-                timerViewModel.getSettingsButtonView()
-                    .sheet(isPresented: $timerViewModel.isPresented) {
-                        TimerSettingsView(settings: $timerModel)
-                    }
-            }
         }
         .onReceive(timer) { time in
             timerViewModel.onReceivingTimer(timer: time)
@@ -40,6 +37,16 @@ struct TimerView: View {
     }
 }
 
+struct TimerView: View {
+    //@Environment(\.scenePhase) var scenePhase
+    
+    @State private var timerModel: TimerModel = TimerModel()
+    
+    var body: some View {
+        TimerViewContent(timerModel: $timerModel)
+    }
+}
+
 #Preview {
-    TimerView(timerViewModel: .init(timerModel: .constant(TimerModel())))
+    TimerView()
 }
