@@ -84,7 +84,8 @@ class TimerViewModel: ObservableObject {
         if self.timeRemaining > 0 {
             self.timeRemaining -= 1
         }
-        else {
+        else { // timeRemaining == 0
+            /* TODO: LOGIC */
             self.isActive = false
         }
     }

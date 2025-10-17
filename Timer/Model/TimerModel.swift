@@ -10,6 +10,7 @@ enum TimerMode {
     case Work
     case Break
     case Precountdown
+    case Finished
 }
 
 extension TimerMode {
@@ -21,6 +22,8 @@ extension TimerMode {
             return "Break"
         case .Precountdown:
             return "Precountdown"
+        case .Finished:
+            return "Finished"
         }
     }
 }
@@ -32,7 +35,7 @@ class TimerModel: ObservableObject {
     var precountdownTime: Time
     var isPrecountOn: Bool
     var currentRound: Int
-    var timerMode: TimerMode = .Work // TODO: move to init
+    var timerMode: TimerMode
 
     init(tm: TimerModel) {
         self.noOfRounds = tm.noOfRounds
@@ -41,6 +44,7 @@ class TimerModel: ObservableObject {
         self.precountdownTime = tm.precountdownTime
         self.isPrecountOn = tm.isPrecountOn
         self.currentRound = tm.currentRound
+        self.timerMode = tm.timerMode
     }
 
     init(
@@ -49,13 +53,15 @@ class TimerModel: ObservableObject {
         breakTime: Time,
         precountdownTime: Time,
         isPrecountOn: Bool = false,
-        currentRound: Int = 0) {
+        currentRound: Int = 0,
+        timerMode: TimerMode) {
             self.noOfRounds = noOfRounds
             self.roundTime = roundTime
             self.breakTime = breakTime
             self.precountdownTime = precountdownTime
             self.isPrecountOn = isPrecountOn
             self.currentRound = currentRound
+            self.timerMode = timerMode
     }
 
     init() {
@@ -65,16 +71,11 @@ class TimerModel: ObservableObject {
         self.precountdownTime = Time(minutes: 0, seconds: 10)
         self.isPrecountOn = false
         self.currentRound = 1
+        self.timerMode = .Precountdown
     }
 
     func getInitialTime() -> Time {
-        return self.roundTime
-//        if self.isPrecountOn {
-//            return self.precountdownTime
-//        }
-//        else {
-//            return self.roundTime
-//        }
+        return self.precountdownTime.toInt() > 0 ? self.precountdownTime : self.roundTime
     }
 
     func setNoOfRounds(noOfRounds: Int) {
@@ -105,12 +106,24 @@ class TimerModel: ObservableObject {
         return currentRound == noOfRounds
     }
 
-    func switchTimerMode() {
+    func setTimerMode(mode: TimerMode) {
+        self.timerMode = mode
+    }
+
+    func switchTimerMode(isLastRound: Bool = false) {
         if self.timerMode == .Work {
-            self.timerMode = .Break
+            if isLastRound {
+                self.setTimerMode(mode: .Finished)
+            }
+            else {
+                self.setTimerMode(.Break)
+            }
         }
         else if self.timerMode == .Break {
-            self.timerMode = .Work
+            self.setTimerMode(mode: .Work)
+        }
+        else if self.timerMode == .Precountdown {
+            self.setTimerMode(mode: .Work)
         }
     }
 
@@ -122,6 +135,8 @@ class TimerModel: ObservableObject {
             return self.breakTime
         case .Precountdown:
             return self.precountdownTime
+        case .Finished:
+            return Time(minutes: 0, seconds: 0)
         }
     }
 }
