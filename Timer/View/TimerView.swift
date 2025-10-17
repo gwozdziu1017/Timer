@@ -24,6 +24,7 @@ struct TimerViewContent: View {
             timerViewModel.getTimeView()
             timerViewModel.getCurrentRoundView()
             timerViewModel.getStartPauseStopButtonsView()
+            timerViewModel.printTestingInfo()
         
             Spacer()
             timerViewModel.getSettingsButtonView()
@@ -37,11 +38,11 @@ struct TimerViewContent: View {
     }
 }
 
+
 struct TimerView: View {
     //@Environment(\.scenePhase) var scenePhase
     
     @State private var timerModel: TimerModel = TimerModel()
-    
     var body: some View {
         TimerViewContent(timerModel: $timerModel)
     }

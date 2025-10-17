@@ -25,6 +25,17 @@ class TimerViewModel: ObservableObject {
         self.isStopButtonDisabled = true
     }
 
+    func printTestingInfo() -> some View {
+        VStack {
+            Text("noOfRounds: \(self.timerModel.noOfRounds)")
+            Text("roundTime: \(self.timerModel.roundTime)")
+            Text("breakTime: \(self.timerModel.breakTime)")
+            Text("precountdownTime: \(self.timerModel.precountdownTime)")
+            Text("currentRound: \(self.timerModel.currentRound)")
+            Text("timerMode: \(self.timerModel.timerMode)")
+        }
+    }
+
     func setStartPauseStopButtonsDisabled(startButtonDisabled: Bool, pauseButtonDisabled: Bool, stopButtonDisabled: Bool) {
         self.isStartButtonDisabled = startButtonDisabled
         self.isPauseButtonDisabled = pauseButtonDisabled
@@ -79,7 +90,7 @@ class TimerViewModel: ObservableObject {
     }
 
     func getTimeView() -> some View {
-        Text("Remaining\n\(self.timeRemaining)")
+        Text("Remaining\n\(self.timeRemaining.toTime().printable())")
             .font(.system(size: 30, design: .monospaced))
             .foregroundStyle(.green)
             .padding(.horizontal, 20)

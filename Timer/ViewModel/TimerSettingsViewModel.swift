@@ -9,6 +9,7 @@ import SwiftUI
 
 class TimerSettingsViewModel: ObservableObject {
     @Published var timerViewModel: TimerViewModel
+    @State var tempprecount = false
 
     init(timerViewModel: Binding<TimerModel>) {
         self.timerViewModel = .init(timerModel: timerViewModel)
@@ -51,7 +52,7 @@ class TimerSettingsViewModel: ObservableObject {
             Text("Break time:")
             Picker("breaktime", selection: timerViewModel.$timerModel.breakTime) {
                 ForEach(breakTimeArray, id:\.self) { elem  in
-                    Text("\(elem.printSeconds())")
+                    Text("\(elem.printInSeconds())")
                 }
             }.pickerStyle(SegmentedPickerStyle())
         }
@@ -59,10 +60,10 @@ class TimerSettingsViewModel: ObservableObject {
 
     func getPrecountOnView() -> some View {
         VStack {
-            Text("Precount:")
+            Text("Precount: ")
             Picker("precount", selection: timerViewModel.$timerModel.precountdownTime) {
                 ForEach(precountdownTimeArray, id:\.self) { elem  in
-                    Text("\(elem.printSeconds())")
+                    Text("\(elem.printInSeconds())")
                 }
             }.pickerStyle(SegmentedPickerStyle())
         }

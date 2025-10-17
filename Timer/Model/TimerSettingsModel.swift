@@ -53,6 +53,24 @@ extension Time {
     func toInt() -> Int {
         return convertTimeToInt(time: self)
     }
+
+    /*
+     There's big difference between printSeconds() and printInSeconds()
+     func printSeconds() will print only second from given time and it's not considering minutes at all
+     func printInSeconds will print whole time value converted to seconds
+     Examples:
+     Time(minutes: 1, seconds: 0)
+        .printSeconds()   -> 0
+        .printInSeconds() -> 60
+
+     Time(minutes: 2, seconds: 5)
+        .printSeconds()   -> 5
+        .printInSeconds() -> 125
+     */
+     func printInSeconds() -> String {
+         let seconds = self.minutes * 60 + self.seconds
+         return "\(seconds)" + " sec"
+    }
 }
 
 extension Int {
@@ -66,7 +84,7 @@ extension Int {
 let breakTimeArray: [Time] = [
     Time(minutes: 0, seconds: 5),
     Time(minutes: 0, seconds: 30),
-    Time(minutes: 0, seconds: 60)
+    Time(minutes: 1, seconds: 00)
 ]
 
 let precountdownTimeArray: [Time] = [
