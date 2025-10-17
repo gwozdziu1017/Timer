@@ -44,56 +44,60 @@ extension Time {
     func printSeconds() -> String {
         return "\(seconds)" + " sec"
     }
+    func printable() -> String {
+        return "\(minutes) min :\(seconds) sec"
+    }
+    func get() -> Time {
+        return self
+    }
+    func toInt() -> Int {
+        return convertTimeToInt(time: self)
+    }
+
+    /*
+     There's big difference between printSeconds() and printInSeconds()
+     func printSeconds() will print only second from given time and it's not considering minutes at all
+     func printInSeconds will print whole time value converted to seconds
+     Examples:
+     Time(minutes: 1, seconds: 0)
+        .printSeconds()   -> 0
+        .printInSeconds() -> 60
+
+     Time(minutes: 2, seconds: 5)
+        .printSeconds()   -> 5
+        .printInSeconds() -> 125
+     */
+     func printInSeconds() -> String {
+         let seconds = self.minutes * 60 + self.seconds
+         return "\(seconds)" + " sec"
+    }
+}
+
+extension Int {
+    func toTime() -> Time {
+        let minutes: Int = self / 60
+        let seconds: Int = self % 60
+        return Time(minutes: minutes, seconds: seconds)
+    }
 }
 
 let breakTimeArray: [Time] = [
     Time(minutes: 0, seconds: 5),
     Time(minutes: 0, seconds: 30),
-    Time(minutes: 0, seconds: 60)
+    Time(minutes: 1, seconds: 00)
 ]
 
 let precountdownTimeArray: [Time] = [
+    Time(minutes: 0, seconds: 0),
     Time(minutes: 0, seconds: 5),
     Time(minutes: 0, seconds: 10),
     Time(minutes: 0, seconds: 30)]
 
-class TimerSettingsModel: ObservableObject {
-    var noOfRounds: Int
-    var roundTime: Time
-    var breakTime: Time
-    var precountdownTime: Time
+let minRoundNumber: Int = 1
+let maxRoundNumber: Int = 30
 
-    init(
-        noOfRounds: Int,
-        roundTime: Time,
-        breakTime: Time,
-        precountdownTime: Time) {
-            self.noOfRounds = noOfRounds
-            self.roundTime = roundTime
-            self.breakTime = breakTime
-            self.precountdownTime = precountdownTime
-    }
+let minTimeMinute: Int = 0
+let maxTimeMinute: Int = 20
 
-    init() {
-        self.noOfRounds = 5
-        self.roundTime = Time(minutes: 5, seconds: 0)
-        self.breakTime = Time(minutes: 1, seconds: 0)
-        self.precountdownTime = Time(minutes: 0, seconds: 10)
-    }
-
-    func setNoOfRounds(noOfRounds: Int) {
-        self.noOfRounds = noOfRounds
-    }
-
-    func setRoundTime(roundTime: Time) {
-        self.roundTime = roundTime
-    }
-
-    func setBreakTime(breakTime: Time) {
-        self.breakTime = breakTime
-    }
-
-    func setPrecountdownTime(precountdownTime: Time) {
-        self.precountdownTime = precountdownTime
-    }
-}
+let minTimeSecond: Int = 0
+let maxTimeSecond: Int = 59

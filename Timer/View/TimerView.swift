@@ -7,63 +7,44 @@
 
 import SwiftUI
 
-struct TimerView: View {
-    @Environment(\.scenePhase) var scenePhase
-    @State private var isActive = true
-
-    @State private var isPresented: Bool = false
-    @State private var timeRemaining = 100
+struct TimerViewContent: View {
+    @StateObject private var timerViewModel: TimerViewModel
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-
-    @State var settings: TimerSettingsModel = TimerSettingsModel()
-
+    
+    init(timerModel: Binding<TimerModel>) {
+        _timerViewModel = StateObject(wrappedValue: TimerViewModel(timerModel: timerModel))
+    }
+    
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea(edges: .all)
-            VStack {
-                Text("Time: \(timeRemaining)")
-                    .font(.system(size: 60, design: .monospaced))
-                    .foregroundStyle(.green)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 5)
-                HStack {
-                    Button("Start") {
-                        isActive = true
-                    }//.disabled(disabled: true)
-                    Button("Pause") {
-                        isActive = false
-                    }
-                    Button("Stop") {
-                        timeRemaining = 100
-                        isActive = false
-                    }
-                    Text("test: \($settings.noOfRounds)").foregroundStyle(.red)
+        
+        
+        // navigation stack na calosc ?
+        VStack {
+            timerViewModel.getTimerModeView()
+            timerViewModel.getTimeView()
+            timerViewModel.getCurrentRoundView()
+            timerViewModel.getStartPauseStopButtonsView()
+            timerViewModel.printTestingInfo()
+        
+            Spacer()
+            timerViewModel.getSettingsButtonView()
+                .sheet(isPresented: $timerViewModel.isPresented) {
+                    TimerSettingsView(settings: $timerViewModel.timerModel)
                 }
-                Spacer()
-                Button("Settings") {
-                    isPresented.toggle()
-                }
-                .background(Color.green)
-                .sheet(isPresented: $isPresented) {
-                    TimerSettingsView(settings: $settings)
-                }
-            }
-
         }
         .onReceive(timer) { time in
-            guard isActive else { return }
+            timerViewModel.onReceivingTimer(timer: time)
+        }
+    }
+}
 
-            if timeRemaining > 0 {
-                timeRemaining -= 1
-            }
-        }
-        .onChange(of: scenePhase) {
-            if scenePhase == .active {
-                isActive = true
-            } else {
-                isActive = false
-            }
-        }
+
+struct TimerView: View {
+    //@Environment(\.scenePhase) var scenePhase
+    
+    @State private var timerModel: TimerModel = TimerModel()
+    var body: some View {
+        TimerViewContent(timerModel: $timerModel)
     }
 }
 
