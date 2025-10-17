@@ -16,9 +16,6 @@ struct TimerViewContent: View {
     }
     
     var body: some View {
-        
-        
-        // navigation stack na calosc ?
         VStack {
             timerViewModel.getTimerModeView()
             timerViewModel.getTimeView()
@@ -40,8 +37,6 @@ struct TimerViewContent: View {
 
 
 struct TimerView: View {
-    //@Environment(\.scenePhase) var scenePhase
-    
     @State private var timerModel: TimerModel = TimerModel()
     var body: some View {
         TimerViewContent(timerModel: $timerModel)
