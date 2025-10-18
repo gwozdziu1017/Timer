@@ -10,8 +10,8 @@ import SwiftUI
 struct TimerSettingsView: View {
     @ObservedObject var timerSettingsViewModel: TimerSettingsViewModel
     
-    init(settings: Binding<TimerModel>) {
-        timerSettingsViewModel = .init(timerViewModel: settings)
+    init(timerViewModel: TimerViewModel) {
+        timerSettingsViewModel = TimerSettingsViewModel(timerViewModel: timerViewModel)
     }
 
     var body: some View {

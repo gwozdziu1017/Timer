@@ -8,14 +8,23 @@
 import SwiftUI
 
 class TimerSettingsViewModel: ObservableObject {
-    @Published var timerViewModel: TimerViewModel
-    @State var isChanged: Bool = false
+    @ObservedObject var timerViewModel: TimerViewModel
 
-    init(timerViewModel: Binding<TimerModel>) {
-        self.timerViewModel = .init(timerModel: timerViewModel)
+    init(timerViewModel: TimerViewModel) {
+        self.timerViewModel = timerViewModel
     }
 
-    
+    func getSaveButtonView() -> some View {
+        HStack {
+            Button("Save") {
+                if self.timerViewModel.timerModel.precountdownTime.toInt() > 0 {
+                    self.timerViewModel.timerModel.refreshTimerMode()
+                    self.timerViewModel.refreshRemainingTime()
+                }
+            }
+        }
+    }
+    // ... reszta kodu bez zmian
     func getNumberOfRoundsView() -> some View {
         VStack {
             Text("Number of rounds:")
@@ -27,7 +36,7 @@ class TimerSettingsViewModel: ObservableObject {
             
         }
     }
-
+    
     func getWorkTimeView() -> some View {
         VStack {
             Text("Work time:")
@@ -47,7 +56,7 @@ class TimerSettingsViewModel: ObservableObject {
             }
         }
     }
-
+    
     func getBreakTimeView() -> some View {
         VStack {
             Text("Break time:")
@@ -58,7 +67,7 @@ class TimerSettingsViewModel: ObservableObject {
             }.pickerStyle(SegmentedPickerStyle())
         }
     }
-
+    
     func getPrecountOnView() -> some View {
         VStack {
             Text("Precount: ")
@@ -70,30 +79,20 @@ class TimerSettingsViewModel: ObservableObject {
         }
     }
     
-//    func getSaveButtonView() -> some View {
-//        HStack {
-//            Button("Save") {
-//                if self.timerViewModel.timerModel.precountdownTime.toInt() > 0 {
-//                    self.timerViewModel.timerModel.refreshTimerMode()
-//                    self.timerViewModel.refreshRemainingTime()
-//                    self.objectWillChange.send()
-//                }
-//            }
-//        }
-//    }
+    //    func getSaveButtonView() -> some View {
+    //        HStack {
+    //            Button("Save") {
+    //                if self.timerViewModel.timerModel.precountdownTime.toInt() > 0 {
+    //                    self.timerViewModel.timerModel.refreshTimerMode()
+    //                    self.timerViewModel.refreshRemainingTime()
+    //                    self.objectWillChange.send()
+    //                }
+    //            }
+    //        }
+    //    }
 
-    func getSaveButtonView() -> some View {
-        HStack {
-            Button("Save") {
-                if self.timerViewModel.timerModel.precountdownTime.toInt() > 0 {
-                    self.timerViewModel.timerModel.refreshTimerMode()
-                    self.timerViewModel.refreshRemainingTime()  // to powinno wystarczyć
-                }
-            }
-        }
-    }
-
-
+    
+    
     func getView() -> some View {
         VStack {
             Text("Settings")
@@ -108,3 +107,4 @@ class TimerSettingsViewModel: ObservableObject {
         }
     }
 }
+
