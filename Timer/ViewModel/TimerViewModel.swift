@@ -12,13 +12,21 @@ class TimerViewModel: ObservableObject {
     @Published private var isPauseButtonDisabled: Bool
     @Published private var isStopButtonDisabled: Bool
 
+    var runNextRound = true
+    var needToIncrementRound = false
+
     init(timerModel: Binding<TimerModel>) {
         self._timerModel = timerModel
         
         self.isActive = false
         self.isPaused = false
         self.isPresented = false
-        self.timeRemaining = timerModel.wrappedValue.getInitialTime().toInt()
+        // Tu jest zmiana - od razu bierzemy precountdownTime jeśli jest większy od 0
+        self.timeRemaining = timerModel.wrappedValue.precountdownTime.toInt() > 0
+            ? timerModel.wrappedValue.precountdownTime.toInt()
+            : timerModel.wrappedValue.getRemainingTimeBasedOnMode().toInt()
+        
+        //self.timeRemaining = timerModel.wrappedValue.getRemainingTimeBasedOnMode().toInt()
 
         self.isStartButtonDisabled = false
         self.isPauseButtonDisabled = true
@@ -80,14 +88,69 @@ class TimerViewModel: ObservableObject {
 
     func onReceivingTimer(timer: Date) {
         guard self.isActive else { return }
-    
-        if self.timeRemaining > 0 {
-            self.timeRemaining -= 1
+
+        /*
+         if self.timeRemaining > 0 {
+             self.timeRemaining -= 1
+         */
+        if self.timerModel.timerMode == .Break && self.timeRemaining == 0 {
+            self.needToIncrementRound = true
         }
-        else { // timeRemaining == 0
-            /* TODO: LOGIC */
+        
+        if self.timerModel.precountdownTime.toInt() == 0 {
+            self.timerModel.setTimerMode(mode: .Work)
+        }
+
+        
+        if runNextRound {
+            // run timer till 0
+            if self.timeRemaining > 0 {
+                self.timeRemaining -= 1
+            }
+            else {
+                self.timerModel.switchTimerMode()
+                self.timeRemaining = self.timerModel.getRemainingTimeBasedOnMode().toInt()
+            }
+            if self.needToIncrementRound {
+                self.timerModel.incrementCurrentRound()
+                self.needToIncrementRound = false
+            }
+            runNextRound = self.timerModel.currentRound <= self.timerModel.noOfRounds
+        }
+        else {
+            self.timerModel.switchTimerMode(isAfterLastRound: true)
+            self.timeRemaining = self.timerModel.getRemainingTimeBasedOnMode().toInt()
             self.isActive = false
         }
+//        if self.timeRemaining > 0 {
+//            self.timeRemaining -= 1
+//        }
+//        else { // timeRemaining == 0
+//            /* TODO: LOGIC */
+//            self.isActive = false
+//        }
+    }
+
+    func runTimer(timer: Date) {
+        if self.timerModel.precountdownTime.toInt() == 0 {
+            self.timerModel.setTimerMode(mode: .Work)
+        }
+
+        
+        while runNextRound {
+            // run timer till 0
+            if self.timeRemaining > 0 {
+                self.timeRemaining -= 1
+            }
+            else {
+                self.timerModel.switchTimerMode()
+                self.timeRemaining = self.timerModel.getRemainingTimeBasedOnMode().toInt()
+            }
+            runNextRound = self.timerModel.currentRound <= self.timerModel.noOfRounds
+        }
+        self.timerModel.switchTimerMode(isAfterLastRound: true)
+        self.timeRemaining = self.timerModel.getRemainingTimeBasedOnMode().toInt()
+        self.isActive = false
     }
 
     func getTimeView() -> some View {
@@ -112,6 +175,14 @@ class TimerViewModel: ObservableObject {
             .foregroundStyle(.green)
             .padding(.horizontal, 20)
             .padding(.vertical, 5)
+    }
+
+    func refreshRemainingTime() {
+        if timerModel.precountdownTime.toInt() > 0 {
+            timeRemaining = timerModel.precountdownTime.toInt()
+        } else {
+            timeRemaining = timerModel.getRemainingTimeBasedOnMode().toInt()
+        }
     }
 
 //    func resetTime() {

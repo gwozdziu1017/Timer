@@ -9,11 +9,12 @@ import SwiftUI
 
 class TimerSettingsViewModel: ObservableObject {
     @Published var timerViewModel: TimerViewModel
-    @State var tempprecount = false
+    @State var isChanged: Bool = false
 
     init(timerViewModel: Binding<TimerModel>) {
         self.timerViewModel = .init(timerModel: timerViewModel)
     }
+
     
     func getNumberOfRoundsView() -> some View {
         VStack {
@@ -69,12 +70,29 @@ class TimerSettingsViewModel: ObservableObject {
         }
     }
     
+//    func getSaveButtonView() -> some View {
+//        HStack {
+//            Button("Save") {
+//                if self.timerViewModel.timerModel.precountdownTime.toInt() > 0 {
+//                    self.timerViewModel.timerModel.refreshTimerMode()
+//                    self.timerViewModel.refreshRemainingTime()
+//                    self.objectWillChange.send()
+//                }
+//            }
+//        }
+//    }
+
     func getSaveButtonView() -> some View {
         HStack {
             Button("Save") {
+                if self.timerViewModel.timerModel.precountdownTime.toInt() > 0 {
+                    self.timerViewModel.timerModel.refreshTimerMode()
+                    self.timerViewModel.refreshRemainingTime()  // to powinno wystarczyć
                 }
             }
         }
+    }
+
 
     func getView() -> some View {
         VStack {
