@@ -8,26 +8,39 @@
 import SwiftUI
 
 struct TimerSettingsView: View {
-    @ObservedObject var timerSettingsViewModel: TimerSettingsViewModel
+    @StateObject private var timerSettingsViewModel: TimerSettingsViewModel
     
     init(timerViewModel: TimerViewModel) {
-        timerSettingsViewModel = TimerSettingsViewModel(timerViewModel: timerViewModel)
+        _timerSettingsViewModel = StateObject(wrappedValue: TimerSettingsViewModel(timerViewModel: timerViewModel))
     }
-
+    
     var body: some View {
-        VStack {
+        TimerSettingsContent(timerSettingsViewModel: timerSettingsViewModel)
+    }
+}
+
+struct TimerSettingsContent: View {
+    @ObservedObject var timerSettingsViewModel: TimerSettingsViewModel
+    
+    var body: some View {
+        VStack(spacing: 20) {
             Text("Settings")
-            VStack {
+                .font(.title)
+                .fontWeight(.bold)
+            
+            VStack(spacing: 30) {
                 timerSettingsViewModel.getNumberOfRoundsView()
                 timerSettingsViewModel.getWorkTimeView()
                 timerSettingsViewModel.getBreakTimeView()
                 timerSettingsViewModel.getPrecountOnView()
                 timerSettingsViewModel.getSaveButtonView()
             }
+            .padding()
         }
     }
 }
-
 #Preview {
     TimerSettingsView(timerViewModel: TimerViewModel(timerModel: .constant(TimerModel())))
 }
+
+

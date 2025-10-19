@@ -10,7 +10,7 @@ import SwiftUI
 struct TimerViewContent: View {
     @ObservedObject var timerViewModel: TimerViewModel
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    
+
     var body: some View {
         VStack {
             timerViewModel.getTimerModeView()

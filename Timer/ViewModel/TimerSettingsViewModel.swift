@@ -18,23 +18,16 @@ class TimerSettingsViewModel: ObservableObject {
         HStack {
             Button("Save") {
                 self.timerViewModel.timerModel.refreshTimerMode()
-                self.timerViewModel.refreshRemainingTime()
+                self.timerViewModel.resetRemainingTime()
 
                 if self.timerViewModel.timerModel.timerMode == .Finished {
-                    if self.timerViewModel.timerModel.precountdownTime.toInt() > 0 {
-                        self.timerViewModel.timerModel.setTimerMode(mode: .Precountdown)
-                    }
-                    else {
-                        self.timerViewModel.timerModel.setTimerMode(mode: .Work)
-                    }
-                    self.timerViewModel.timerModel.currentRound = 1
-                    self.timerViewModel.timeRemaining = self.timerViewModel.timerModel.getRemainingTimeBasedOnMode().toInt()
-                    self.timerViewModel.isActive = false
+                    self.timerViewModel.resetTimer()
                 }
                 self.timerViewModel.setStartPauseStopButtonsDisabled(
                     startButtonDisabled: false,
                     pauseButtonDisabled: true,
                     stopButtonDisabled: true)
+                self.timerViewModel.isPresented = false
             }
         }
     }
@@ -47,10 +40,9 @@ class TimerSettingsViewModel: ObservableObject {
                     Text("\(elem)")
                 }
             }.pickerStyle(WheelPickerStyle())
-            
         }
     }
-    
+
     func getWorkTimeView() -> some View {
         VStack {
             Text("Work time:")
@@ -70,7 +62,7 @@ class TimerSettingsViewModel: ObservableObject {
             }
         }
     }
-    
+
     func getBreakTimeView() -> some View {
         VStack {
             Text("Break time:")
@@ -81,7 +73,7 @@ class TimerSettingsViewModel: ObservableObject {
             }.pickerStyle(SegmentedPickerStyle())
         }
     }
-    
+
     func getPrecountOnView() -> some View {
         VStack {
             Text("Precount: ")
@@ -93,4 +85,3 @@ class TimerSettingsViewModel: ObservableObject {
         }
     }
 }
-
