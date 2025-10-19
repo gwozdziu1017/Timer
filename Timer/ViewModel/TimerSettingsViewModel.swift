@@ -24,7 +24,7 @@ class TimerSettingsViewModel: ObservableObject {
             }
         }
     }
-    // ... reszta kodu bez zmian
+
     func getNumberOfRoundsView() -> some View {
         VStack {
             Text("Number of rounds:")
@@ -76,34 +76,6 @@ class TimerSettingsViewModel: ObservableObject {
                     Text("\(elem.printInSeconds())")
                 }
             }.pickerStyle(SegmentedPickerStyle())
-        }
-    }
-    
-    //    func getSaveButtonView() -> some View {
-    //        HStack {
-    //            Button("Save") {
-    //                if self.timerViewModel.timerModel.precountdownTime.toInt() > 0 {
-    //                    self.timerViewModel.timerModel.refreshTimerMode()
-    //                    self.timerViewModel.refreshRemainingTime()
-    //                    self.objectWillChange.send()
-    //                }
-    //            }
-    //        }
-    //    }
-
-    
-    
-    func getView() -> some View {
-        VStack {
-            Text("Settings")
-            //Spacer()
-            VStack {
-                getNumberOfRoundsView()
-                getWorkTimeView()
-                getBreakTimeView()
-                getPrecountOnView()
-                getSaveButtonView()
-            }
         }
     }
 }

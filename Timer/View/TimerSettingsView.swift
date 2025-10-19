@@ -15,10 +15,19 @@ struct TimerSettingsView: View {
     }
 
     var body: some View {
-        timerSettingsViewModel.getView()
+        VStack {
+            Text("Settings")
+            VStack {
+                timerSettingsViewModel.getNumberOfRoundsView()
+                timerSettingsViewModel.getWorkTimeView()
+                timerSettingsViewModel.getBreakTimeView()
+                timerSettingsViewModel.getPrecountOnView()
+                timerSettingsViewModel.getSaveButtonView()
+            }
+        }
     }
 }
 
-//#Preview {
-//    TimerSettingsView()
-//}
+#Preview {
+    TimerSettingsView(timerViewModel: TimerViewModel(timerModel: .constant(TimerModel())))
+}
