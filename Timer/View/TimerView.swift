@@ -8,26 +8,26 @@
 import SwiftUI
 
 struct TimerViewContent: View {
-    @StateObject private var timerViewModel: TimerViewModel
+    @ObservedObject var timerViewModel: TimerViewModel
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
-    init(timerModel: Binding<TimerModel>) {
-        _timerViewModel = StateObject(wrappedValue: TimerViewModel(timerModel: timerModel))
-    }
-    
     var body: some View {
-        VStack {
-            timerViewModel.getTimerModeView()
-            timerViewModel.getTimeView()
-            timerViewModel.getCurrentRoundView()
-            timerViewModel.getStartPauseStopButtonsView()
-            timerViewModel.printTestingInfo()
-        
-            Spacer()
-            timerViewModel.getSettingsButtonView()
-                .sheet(isPresented: $timerViewModel.isPresented) {
-                    TimerSettingsView(settings: $timerViewModel.timerModel)
-                }
+        ZStack {
+            timerViewModel.backgroundColor
+            
+            VStack(spacing: 5) {
+                timerViewModel.getTimerModeView()
+                timerViewModel.getCurrentRoundView()
+                timerViewModel.getTimeView()
+                timerViewModel.getStartPauseStopButtonsView()
+                
+                Spacer()
+                timerViewModel.getSettingsButtonView()
+                    .sheet(isPresented: $timerViewModel.isPresented) {
+                        TimerSettingsView(timerViewModel: timerViewModel)
+                    }
+            }
+            .padding()
         }
         .onReceive(timer) { time in
             timerViewModel.onReceivingTimer(timer: time)
@@ -35,11 +35,11 @@ struct TimerViewContent: View {
     }
 }
 
-
 struct TimerView: View {
-    @State private var timerModel: TimerModel = TimerModel()
+    @StateObject private var timerViewModel = TimerViewModel(timerModel: .constant(TimerModel()))
+    
     var body: some View {
-        TimerViewContent(timerModel: $timerModel)
+        TimerViewContent(timerViewModel: timerViewModel)
     }
 }
 

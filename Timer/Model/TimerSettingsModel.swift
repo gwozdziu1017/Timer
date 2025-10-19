@@ -45,7 +45,7 @@ extension Time {
         return "\(seconds)" + " sec"
     }
     func printable() -> String {
-        return "\(minutes) min :\(seconds) sec"
+        return "\(minutes) min \(seconds) sec"
     }
     func get() -> Time {
         return self

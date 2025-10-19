@@ -8,85 +8,136 @@
 import SwiftUI
 
 class TimerSettingsViewModel: ObservableObject {
-    @Published var timerViewModel: TimerViewModel
-    @State var tempprecount = false
-
-    init(timerViewModel: Binding<TimerModel>) {
-        self.timerViewModel = .init(timerModel: timerViewModel)
-    }
+    @ObservedObject var timerViewModel: TimerViewModel
     
-    func getNumberOfRoundsView() -> some View {
-        VStack {
-            Text("Number of rounds:")
-            Picker("noofrounds", selection: timerViewModel.$timerModel.noOfRounds) {
-                ForEach(minRoundNumber...maxRoundNumber, id: \.self) {elem  in
-                    Text("\(elem)")
-                }
-            }.pickerStyle(WheelPickerStyle())
+    init(timerViewModel: TimerViewModel) {
+        self.timerViewModel = timerViewModel
+    }
+
+    func getSaveButtonView() -> some View {
+        Button {
+            self.timerViewModel.timerModel.refreshTimerMode()
+            self.timerViewModel.resetRemainingTime()
             
+            if self.timerViewModel.timerModel.timerMode == .Finished {
+                self.timerViewModel.resetTimer()
+            }
+
+            self.timerViewModel.setStartPauseStopButtonsDisabled(
+                startButtonDisabled: false,
+                pauseButtonDisabled: true,
+                stopButtonDisabled: true
+            )
+            self.timerViewModel.isPresented = false
+        } label: {
+            Text("Save")
+                .font(.system(size: 20, weight: .bold))
+                .bold()
+        }
+    }
+
+    func getNumberOfRoundsView() -> some View {
+        Section {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Number of Rounds")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                
+                Picker("", selection: timerViewModel.$timerModel.noOfRounds) {
+                    ForEach(minRoundNumber...maxRoundNumber, id: \.self) { elem in
+                        Text("\(elem)")
+                            .tag(elem)
+                    }
+                }
+                .pickerStyle(.wheel)
+                .frame(height: 100)
+            }
+            .padding(.vertical, 5)
         }
     }
 
     func getWorkTimeView() -> some View {
-        VStack {
-            Text("Work time:")
-            HStack {
-                Text("Minutes:")
-                Picker("min", selection: timerViewModel.$timerModel.roundTime.minutes) {
-                    ForEach(minTimeMinute...maxTimeMinute, id: \.self) {elem  in
-                        Text("\(elem)")
+        Section {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Work Time")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                
+                HStack(spacing: 20) {
+                    VStack(alignment: .leading) {
+                        Text("Minutes")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        
+                        Picker("", selection: timerViewModel.$timerModel.roundTime.minutes) {
+                            ForEach(minTimeMinute...maxTimeMinute, id: \.self) { elem in
+                                Text("\(elem)")
+                                    .tag(elem)
+                            }
+                        }
+                        .pickerStyle(.wheel)
+                        .frame(height: 100)
                     }
-                }.pickerStyle(WheelPickerStyle())
-                Text("Seconds:")
-                Picker("sec", selection: timerViewModel.$timerModel.roundTime.seconds) {
-                    ForEach(minTimeSecond...maxTimeSecond, id: \.self) {elem  in
-                        Text("\(elem)")
+
+                    VStack(alignment: .leading) {
+                        Text("Seconds")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        
+                        Picker("", selection: timerViewModel.$timerModel.roundTime.seconds) {
+                            ForEach(minTimeSecond...maxTimeSecond, id: \.self) { elem in
+                                Text("\(elem)")
+                                    .tag(elem)
+                            }
+                        }
+                        .pickerStyle(.wheel)
+                        .frame(height: 100)
                     }
-                }.pickerStyle(WheelPickerStyle())
+                }
             }
+            .padding(.vertical, 5)
         }
     }
 
     func getBreakTimeView() -> some View {
-        VStack {
-            Text("Break time:")
-            Picker("breaktime", selection: timerViewModel.$timerModel.breakTime) {
-                ForEach(breakTimeArray, id:\.self) { elem  in
-                    Text("\(elem.printInSeconds())")
+        Section {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Break Time")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                
+                Picker("", selection: timerViewModel.$timerModel.breakTime) {
+                    ForEach(breakTimeArray, id: \.self) { elem in
+                        Text("\(elem.printInSeconds())")
+                            .tag(elem)
+                    }
                 }
-            }.pickerStyle(SegmentedPickerStyle())
+                .pickerStyle(.segmented)
+            }
+            .padding(.vertical, 5)
         }
     }
 
     func getPrecountOnView() -> some View {
-        VStack {
-            Text("Precount: ")
-            Picker("precount", selection: timerViewModel.$timerModel.precountdownTime) {
-                ForEach(precountdownTimeArray, id:\.self) { elem  in
-                    Text("\(elem.printInSeconds())")
+        Section {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Precount")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                
+                Picker("", selection: timerViewModel.$timerModel.precountdownTime) {
+                    ForEach(precountdownTimeArray, id: \.self) { elem in
+                        Text("\(elem.printInSeconds())")
+                            .tag(elem)
+                    }
                 }
-            }.pickerStyle(SegmentedPickerStyle())
+                .pickerStyle(.segmented)
+            }
+            .padding(.vertical, 5)
         }
     }
-    
-    func getSaveButtonView() -> some View {
-        HStack {
-            Button("Save") {
-                }
-            }
-        }
+}
 
-    func getView() -> some View {
-        VStack {
-            Text("Settings")
-            //Spacer()
-            VStack {
-                getNumberOfRoundsView()
-                getWorkTimeView()
-                getBreakTimeView()
-                getPrecountOnView()
-                getSaveButtonView()
-            }
-        }
-    }
+#Preview {
+    TimerSettingsView(timerViewModel: TimerViewModel(timerModel: .constant(TimerModel())))
 }
