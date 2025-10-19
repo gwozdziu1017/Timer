@@ -21,7 +21,7 @@ extension TimerMode {
         case .Break:
             return "Break"
         case .Precountdown:
-            return "Precountdown"
+            return "Get Ready"
         case .Finished:
             return "Finished"
         }

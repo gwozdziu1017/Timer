@@ -1,5 +1,29 @@
 import SwiftUI
 
+struct ControlButton: View { // start/pause/stop
+    let tittle: String
+    let isDisabled: Bool
+    let action: () -> Void
+
+    let activeButtonColor: Color = .mint.opacity(0.5)
+    let disabledButtonColor: Color = .gray.opacity(0.7)
+
+    var body: some View {
+        Button(action: action) {
+            Text(tittle)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundStyle(isDisabled ? .gray : .white)
+                .padding(.vertical, 10)
+                .padding(.horizontal, 30)
+                .background(
+                    Capsule()
+                        .fill(isDisabled ? disabledButtonColor : activeButtonColor)
+                )
+        }
+        .disabled(isDisabled)
+    }
+}
+
 class TimerViewModel: ObservableObject {
     @Binding var timerModel: TimerModel
 
@@ -30,6 +54,19 @@ class TimerViewModel: ObservableObject {
         self.isStopButtonDisabled = true
     }
 
+    private var modeColor: Color {
+        switch self.timerModel.timerMode {
+        case .Work:
+            return .red
+        case .Break:
+            return .green
+        case .Finished:
+            return .gray
+        case .Precountdown:
+            return .orange
+        }
+    }
+
     func printTestingInfo() -> some View {
         VStack {
             Text("noOfRounds: \(self.timerModel.noOfRounds)")
@@ -48,30 +85,28 @@ class TimerViewModel: ObservableObject {
     }
 
     func getStartPauseStopButtonsView() -> some View {
-        HStack {
-            Button("Start") {
+        return HStack(spacing: 10) {
+            ControlButton(tittle: "Start", isDisabled: self.isStartButtonDisabled) {
                 self.isActive = true
                 self.setStartPauseStopButtonsDisabled(
                     startButtonDisabled: true,
                     pauseButtonDisabled: false,
                     stopButtonDisabled: false)
-            }.disabled(self.isStartButtonDisabled)
-
-            Button("Pause") {
+            }
+            ControlButton(tittle: "Pause", isDisabled: self.isPauseButtonDisabled) {
                 self.isActive = false
                 self.setStartPauseStopButtonsDisabled(
                     startButtonDisabled: false,
                     pauseButtonDisabled: true,
                     stopButtonDisabled: false)
-            }.disabled(self.isPauseButtonDisabled)
-
-            Button("Stop") {
+            }
+            ControlButton(tittle: "Stop", isDisabled: self.isStopButtonDisabled) {
                 self.resetTimer()
                 self.setStartPauseStopButtonsDisabled(
                     startButtonDisabled: false,
                     pauseButtonDisabled: true,
                     stopButtonDisabled: true)
-            }.disabled(self.isStopButtonDisabled)
+            }
         }
     }
 
@@ -88,23 +123,22 @@ class TimerViewModel: ObservableObject {
     }
 
     func getSettingsButtonView() -> some View {
-        Button("Settings") {
+        ControlButton(tittle: "Settings", isDisabled: false) {
             self.isPresented.toggle()
         }
-        .background(Color.green)
     }
 
     func onReceivingTimer(timer: Date) {
         guard isActive else { return }
-        
+
         if shouldFinishLastRound {
             handleLastRound()
             return
         }
-        
+
         handleBreakTimeEnd()
         handlePrecountdownEnd()
-        
+
         if runNextRound {
             handleRunningRound()
         } else {
@@ -174,28 +208,48 @@ class TimerViewModel: ObservableObject {
         isActive = false
     }
 
+    var backgroundColor: some View {
+        Color(.black)
+            .ignoresSafeArea()
+            .opacity(0.8)
+    }
+
     func getTimeView() -> some View {
-        Text("Remaining\n\(self.timeRemaining.toTime().printable())")
-            .font(.system(size: 30, design: .monospaced))
-            .foregroundStyle(.green)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 5)
+        ZStack {
+            Circle()
+                .stroke(modeColor.opacity(0.2), lineWidth: 20)
+            Circle()
+                .stroke(modeColor, style: StrokeStyle(lineWidth: 20, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+            
+            
+            VStack(spacing: 5) {
+                Text("\(self.timeRemaining.toTime().printable())")
+                    .font(.system(size: 60, weight: .bold, design: .rounded))
+                    .foregroundStyle(self.modeColor)
+                    .monospacedDigit()
+            }
+        }
+        .frame(width: 280, height: 280)
+        .padding()
     }
 
     func getTimerModeView() -> some View {
         Text(timerModel.timerMode.getModeString())
-            .font(.system(size: 30, design: .monospaced))
-            .foregroundStyle(.green)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 5)
+            .font(.system(size: 35, weight: .bold, design: .rounded))
+            .foregroundStyle(modeColor)
+            .padding(.vertical, 10)
+            .padding(.horizontal, 100)
+            .background(
+                Capsule()
+                    .fill(modeColor.opacity(0.2))
+            )
     }
     
     func getCurrentRoundView() -> some View {
         Text("Round: \(self.timerModel.currentRound) of \(self.timerModel.noOfRounds)")
-            .font(.system(size: 30, design: .monospaced))
-            .foregroundStyle(.green)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 5)
+            .font(.system(size: 20, weight: .medium, design: .rounded))
+            .foregroundStyle(.white)
     }
 
     func resetRemainingTime() {
