@@ -66,7 +66,13 @@ class TimerViewModel: ObservableObject {
             }.disabled(self.isPauseButtonDisabled)
             
             Button("Stop") {
-                self.timeRemaining = self.timerModel.getInitialTime().toInt()
+                if self.timerModel.precountdownTime.toInt() > 0 {
+                    self.timerModel.setTimerMode(mode: .Precountdown)
+                }
+                else {
+                    self.timerModel.setTimerMode(mode: .Work)
+                }
+                self.timeRemaining = self.timerModel.getRemainingTimeBasedOnMode().toInt()
                 self.isActive = false
                 self.setStartPauseStopButtonsDisabled(
                     startButtonDisabled: false,
@@ -85,12 +91,19 @@ class TimerViewModel: ObservableObject {
     
     func onReceivingTimer(timer: Date) {
         guard self.isActive else { return }
+        if self.timerModel.timerMode == .Work && self.timeRemaining == 1 && self.timerModel.currentRound == self.timerModel.noOfRounds {
+            self.timerModel.switchTimerMode(isAfterLastRound: true)
+            self.timeRemaining = self.timerModel.getRemainingTimeBasedOnMode().toInt()
+            self.isActive = false
+            self.setStartPauseStopButtonsDisabled(startButtonDisabled: true, pauseButtonDisabled: true, stopButtonDisabled: true)
+            return
+        }
 
-        if self.timerModel.timerMode == .Break && self.timeRemaining == 0 {
+        if self.timerModel.timerMode == .Break && self.timeRemaining == 1 {
             self.needToIncrementRound = true
         }
         
-        if self.timerModel.precountdownTime.toInt() == 0 {
+        if self.timerModel.precountdownTime.toInt() == 1 {
             self.timerModel.setTimerMode(mode: .Work)
         }
         

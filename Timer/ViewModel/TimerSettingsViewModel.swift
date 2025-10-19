@@ -17,10 +17,24 @@ class TimerSettingsViewModel: ObservableObject {
     func getSaveButtonView() -> some View {
         HStack {
             Button("Save") {
-                if self.timerViewModel.timerModel.precountdownTime.toInt() > 0 {
-                    self.timerViewModel.timerModel.refreshTimerMode()
-                    self.timerViewModel.refreshRemainingTime()
+                self.timerViewModel.timerModel.refreshTimerMode()
+                self.timerViewModel.refreshRemainingTime()
+
+                if self.timerViewModel.timerModel.timerMode == .Finished {
+                    if self.timerViewModel.timerModel.precountdownTime.toInt() > 0 {
+                        self.timerViewModel.timerModel.setTimerMode(mode: .Precountdown)
+                    }
+                    else {
+                        self.timerViewModel.timerModel.setTimerMode(mode: .Work)
+                    }
+                    self.timerViewModel.timerModel.currentRound = 1
+                    self.timerViewModel.timeRemaining = self.timerViewModel.timerModel.getRemainingTimeBasedOnMode().toInt()
+                    self.timerViewModel.isActive = false
                 }
+                self.timerViewModel.setStartPauseStopButtonsDisabled(
+                    startButtonDisabled: false,
+                    pauseButtonDisabled: true,
+                    stopButtonDisabled: true)
             }
         }
     }

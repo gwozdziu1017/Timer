@@ -42,12 +42,3 @@ struct TimerView: View {
 #Preview {
     TimerView()
 }
-
-
-/*
- stop nie wraca do precount jesli ustawiony - liczy dobrze, ale zle wyswietla tryb
-
- usunac break po ostatniej rundzie
- finished jakos dziwnie przeskkuje
- czy potrzebuje button save?
- */
