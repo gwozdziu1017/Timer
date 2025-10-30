@@ -128,9 +128,19 @@ class TimerViewModel: ObservableObject {
         }
     }
 
+    private func handleSoundEffects() {
+        if timeRemaining > 1 && timeRemaining < 5 {
+            SoundEffects.playCountdownSound()
+        }
+        if timeRemaining == 1 {
+            SoundEffects.playCountdownFinishedSound()
+        }
+    }
+
     func onReceivingTimer(timer: Date) {
         guard isActive else { return }
 
+        handleSoundEffects()
         if shouldFinishLastRound {
             handleLastRound()
             return
